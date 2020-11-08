@@ -1,19 +1,21 @@
 <template>
   <div class="home">
-    <h1>Title</h1>
 
-    <button @click="enterText" class="hints">Click Me</button>
-    <div >
-        <p class="output" v-for="(p, i) in paragraph" :key="i">
-          <span class="sentenceContainer" v-for="(w,j) in p" :key="j" @click="switchToInput(j)">
+    <button  @click="enterText" class="hints">Record</button> <br>
+
+    <div id ="box" contenteditable="true" style="height: 300px; width: 750px; overflow-Y: auto; text-align: justify; margin-left: 50%; transform:translateX(-50%);">
+        <!-- <p class="output" v-for="(p, i) in paragraph" :key="i">
+          <span  class="sentenceContainer" v-for="(w,j) in p" :key="j" @click="switchToInput(j)">
             
-            <input id="in" v-if="input && temp==j" v-on:keyup.enter="check(i,j)" :value="w.text" type="text">
-            <span style="position: relative" v-else> {{w.text}}
+            <input ref="in" id="in" v-if="input && temp == j" v-on:keyup.enter="check(i,j)" :value="w.text" type="text">
+            <span style="position: relative" > {{w.text}}
               <button class='xButton'>x</button>
             </span>
           </span>
         </p>
+        <p class="p">32;</p> -->
     </div>
+    <button  @click="enterText" class="hints">Save</button>
 
   </div>
 </template>
@@ -30,10 +32,12 @@ recognition.lang = 'en-US';
 recognition.interimResults = false;
 recognition.maxAlternatives = 1;
 
-const elementType = {
-  SENTENCE: "sentence",
-  HEADER: "header",
-  LINE_BREAK: "line Break"
+const COMMAND = 'hey noodle'
+const commandType = {
+  SUBTITLE: 'title',
+  NEW_LINE: 'line',
+  BOLD: 'bold',
+  UNDERLINE: 'underline'
 }
 // var diagnostic = document.querySelector('.output');
 // var bg = document.querySelector('html');
@@ -61,60 +65,72 @@ export default {
   created(){
 
   },
+  watch:{
+    input(){
+      if(this.input){
+        this.$nextTick(() => {
+          // this.$refs.in.focus()
+          document.getElementById('in').focus();
+        })
+      }
+    }
+  },
   methods: {
     enterText(){
       
       recognition.start();
       console.log('Waiting for command.');
+      
+      let box = document.getElementById("box");
+      
 
         recognition.onresult = (event) => {
-          
-          let storePreviousText = []
 
-          if(this.paragraph.length > 0) {
-            storePreviousText = this.paragraph.pop()
-            console.log("Previous Text: ", storePreviousText)
+          const result = event.results[0][0].transcript
+          console.log(result)
+
+          if(result.includes(COMMAND)){
+
+            if(result.includes(`${COMMAND} ${commandType.SUBTITLE}`)){
+              
+              this.createHeaderElement(`${COMMAND} ${commandType.SUBTITLE}`, box, result);
+          
+            }else if(result.includes(`${COMMAND} ${commandType.NEW_LINE}`)){
+
+              this.createNewLineElement(`${COMMAND} ${commandType.NEW_LINE}`, box, result)
+              
+            }
+
           }
-          
-          storePreviousText.push({
-            type: elementType.SENTENCE, 
-            text: event.results[0][0].transcript+'. '
-          });
-
-          this.paragraph.push(storePreviousText)
-
+          else {
+            box.innerHTML += result;
+          }
+      
         };
     },
-    createHeaderElement(){
-
+    createHeaderElement(command, box, result){
+      const partition = result.indexOf(command)
+      const end = command.length
+      if(result.substring(0,partition).length > 0){
+        box.innerHTML += result.substring(0,partition) + '. '
+      }
+      box.innerHTML += `<h4>${result.substring(end)}</h4>`
     },
-    createNewLineElement(){
-
+    createNewLineElement(command, box, result){
+      const partition = result.indexOf(command)
+      const end = command.length
+      if(result.substring(0,partition).length > 0){
+        box.innerHTML += result.substring(0,partition) + '. '
+      }
+      box.innerHTML += result.substring(0,partition) + '. '
+      box.innerHTML += `<br/>${result.substring(end)}`
     },
     removeLastNoteSentence(){
 
     },
-    switchToInput(x){
-      this.input = true;
-      this.temp = x
-    },
-    check(x,y){
-      
-      let temp = this.paragraph
-
-
-      temp[x][y] = {
-        ...temp[x][y],
-        text: document.getElementById('in').value
-      }
-      
-      console.log(temp);
-      this.paragraph = temp;
-      this.input = false;
-      this.temp = -1;
+    createNewParagraph(){
 
     }
-
   },
   mounted () {
     // console.log(diagnostic, bg, hints)
@@ -124,9 +140,17 @@ export default {
 </script>
 
 <style scoped>
+.home{
+  background: white;
+  padding: 30px 100px;
+  color: black;
+}
 .sentenceContainer{
   padding: 2px;
 
+}
+button{
+  float: right;
 }
 
 .sentenceContainer:hover .xButton{
@@ -146,6 +170,31 @@ export default {
 }
 .xButton{
   display: none;
+}
+.p:hover{
+  background: rgba(226, 234, 243, 0.541);
+  /* white-space: pre; */
+
+}
+p{
+  margin: 0;
+  padding: 0;
+}
+h3{
+  padding: 0;
+  margin: 0;
+}
+div:focus{
+  background: white;
+  outline: none;
+
+}
+div{
+  border-left: solid #A9BAD380 3px;
+  border-right: solid #a9bad380 3px;
+}
+#box{
+  padding: 25px 80px;
 }
 
 
