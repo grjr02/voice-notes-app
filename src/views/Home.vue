@@ -3,7 +3,7 @@
 
     <button  @click="enterText" class="hints">Record</button> <br>
 
-    <div id ="box" contenteditable="true" style="height: 300px; width: 750px; overflow-Y: auto; text-align: justify; margin-left: 50%; transform:translateX(-50%);">
+    <div id ="box" contenteditable="true" style="height: 300px; width: 700px; overflow-Y: auto; text-align: justify; margin-left: 50%; transform:translateX(-50%);">
         <!-- <p class="output" v-for="(p, i) in paragraph" :key="i">
           <span  class="sentenceContainer" v-for="(w,j) in p" :key="j" @click="switchToInput(j)">
             
@@ -189,12 +189,10 @@ div:focus{
   outline: none;
 
 }
-div{
-  border-left: solid #A9BAD380 3px;
-  border-right: solid #a9bad380 3px;
-}
+
 #box{
   padding: 25px 80px;
+  background: rgb(248, 248, 248);
 }
 
 
