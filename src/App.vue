@@ -16,9 +16,6 @@
   </header>
   
   <div id="app">
-    <div id="sidebar">
-      <NotesList/>
-    </div>
     <router-view/>
   </div>
   <div class="footer">
@@ -32,12 +29,11 @@
 
 <script>
 
-import NotesList from './components/NotesList.vue'
 
 
 export default {
   name: 'App',
-  components: {NotesList},
+  components: {},
   props: {},
   data () {
     return {
@@ -56,13 +52,8 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   color: white;
   /* background: blue; */
-  display: flex;
 }
-#sidebar {
-  background: red;
-  flex: .2;
-  margin-top: 50px;
-}
+
 nav {
   margin: 0;
   text-align: left;
