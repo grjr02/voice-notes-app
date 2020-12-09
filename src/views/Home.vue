@@ -1,23 +1,33 @@
 <template>
   <div class="home">
-
-    <button  @click="enterText" class="hints">Record</button> <br>
-
-    <div id ="box" contenteditable="true" style="height: 300px; width: 700px; overflow-Y: auto; text-align: justify; margin-left: 50%; transform:translateX(-50%);">
-        <!-- <p class="output" v-for="(p, i) in paragraph" :key="i">
-          <span  class="sentenceContainer" v-for="(w,j) in p" :key="j" @click="switchToInput(j)">
-            
-            <input ref="in" id="in" v-if="input && temp == j" v-on:keyup.enter="check(i,j)" :value="w.text" type="text">
-            <span style="position: relative" > {{w.text}}
-              <button class='xButton'>x</button>
-            </span>
-          </span>
-        </p>
-        <p class="p">32;</p> -->
+    
+    <!-- <button  @click="enterText" class="hints">Record</button> <br> -->
+  <!-- <div style="width: 90%; background: salmon"> -->
+    <div style="flex: .8;">
+      <div id ="box" contenteditable="true" style="height: 300px; width: 60%; overflow-Y: auto; text-align: justify; margin-left: 50%; transform:translateX(-50%); ">
+      
+      </div>
     </div>
-    <button  @click="enterText" class="hints">Save</button>
+    <div style="flex: .2; position: relative">
+      
 
-  </div>
+      <!-- <div style="position: absolute; display: inline; width: 15%; right: 0; top: 25px"> -->
+        <span style="position: absolute; right: 50%; transform: translateX(50%);">
+          <svg @click="enterText" style="width:50px;height:50px" viewBox="0 0 24 24">
+            <path d="M12,20A8,8 0 0,1 4,12A8,8 0 0,1 12,4A8,8 0 0,1 20,12A8,8 0 0,1 12,20M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M12,7A5,5 0 0,0 7,12A5,5 0 0,0 12,17A5,5 0 0,0 17,12A5,5 0 0,0 12,7Z" />   
+          </svg>
+        </span>
+        <span v-if="active" >...</span>
+        <br>
+        <span style="position: absolute; bottom: 0; right: 50%; transform: translateX(50%);">
+        <button  @click="save" class="hints">Save</button>
+        <button  @click="add" class="hints">Add</button>
+        </span>
+      <!-- </div> -->
+    </div>
+
+
+    </div>
 </template>
 
 <script>
@@ -59,7 +69,9 @@ export default {
       text:[],
       index: 0,
       input: false,
-      temp:-1
+      temp:-1,
+      stringVal: '',
+      active: false
     }
   },
   created(){
@@ -82,10 +94,14 @@ export default {
       console.log('Waiting for command.');
       
       let box = document.getElementById("box");
+
+      recognition.onstart = () => {
+        this.active = true;
+      }
       
 
         recognition.onresult = (event) => {
-
+          this.active = false;
           const result = event.results[0][0].transcript
           console.log(result)
 
@@ -114,7 +130,8 @@ export default {
       if(result.substring(0,partition).length > 0){
         box.innerHTML += result.substring(0,partition) + '. '
       }
-      box.innerHTML += `<h4>${result.substring(end)}</h4>`
+      box.innerHTML += `<br/>`+`<span><h3>${result.substring(end)}</h3></span>`
+      console.log(box.innerHTML);
     },
     createNewLineElement(command, box, result){
       const partition = result.indexOf(command)
@@ -122,7 +139,7 @@ export default {
       if(result.substring(0,partition).length > 0){
         box.innerHTML += result.substring(0,partition) + '. '
       }
-      box.innerHTML += result.substring(0,partition) + '. '
+      // box.innerHTML += result.substring(0,partition) + '. '
       box.innerHTML += `<br/>${result.substring(end)}`
     },
     removeLastNoteSentence(){
@@ -130,6 +147,15 @@ export default {
     },
     createNewParagraph(){
 
+    },
+    save(){
+
+      let box = document.getElementById("box");
+       this.stringVal = box.innerHTML;
+    },
+    add(){
+      let box = document.getElementById("box");
+      box.innerHTML += this.stringVal;
     }
   },
   mounted () {
@@ -141,6 +167,9 @@ export default {
 
 <style scoped>
 .home{
+  /* display: flex; */
+  flex: .8;
+  display: flex;
   background: white;
   padding: 30px 100px;
   color: black;
@@ -193,7 +222,21 @@ div:focus{
 #box{
   padding: 25px 80px;
   background: rgb(248, 248, 248);
+  /* display: inline-flex ; */
 }
-
+svg{
+  cursor: pointer;
+  /* background: red; */
+  /* border-radius: 40px; */
+}
+svg:hover{
+  opacity: .4;
+}
+path{
+  fill: rgb(253, 110, 110);
+}
+/* path:hover{
+  fill: rgba(255, 97, 97, 0.4)
+} */
 
 </style>

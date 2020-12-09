@@ -16,15 +16,35 @@
   </header>
   
   <div id="app">
+    <div id="sidebar">
+      <NotesList/>
+    </div>
     <router-view/>
   </div>
   <div class="footer">
     Commands: 
+    <br>
+    <p> Header: hey noodle title...</p>
+    <p>New Line: hey noodle line...</p>
   </div>
 </div>
 </template>
 
 <script>
+
+import NotesList from './components/NotesList.vue'
+
+
+export default {
+  name: 'App',
+  components: {NotesList},
+  props: {},
+  data () {
+    return {
+      
+    }
+  }
+}
 </script>
 
 <style>
@@ -35,7 +55,13 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   color: white;
-  background: blue;
+  /* background: blue; */
+  display: flex;
+}
+#sidebar {
+  background: red;
+  flex: .2;
+  margin-top: 50px;
 }
 nav {
   margin: 0;
@@ -59,6 +85,8 @@ nav {
   display: flex;
   align-items: center;
   float: right;
+  vertical-align: middle;
+  /* height: 100%; */
 }
 
 #header #links:hover{
@@ -88,7 +116,7 @@ nav {
   border-radius: 10px;
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
   border: #a9bad388 3px solid;
-  padding: 40px;
+  padding: 20px 40px;
 }
 
 </style>
